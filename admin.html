@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Dashboard · GM TUSHARX VIRTUAL</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+
+  <style>
+    :root {
+      --bg: #090a0f;
+      --surface: #12141d;
+      --surface2: #1b1e2e;
+      --border: #2a2e45;
+      --text: #f3f4f6;
+      --accent: #38bdf8;
+      --accent2: #0284c7;
+    }
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      min-height: 100vh;
+      padding: 20px;
+    }
+    .glass {
+      background-color: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 20px;
+    }
+    .input-dark {
+      background-color: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 10px 14px;
+      border-radius: 10px;
+      width: 100%;
+      outline: none;
+    }
+    .input-dark:focus { border-color: var(--accent); }
+    .btn-glow {
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      color: #fff; font-weight: 700; border: none;
+      padding: 10px 18px; border-radius: 10px; cursor: pointer;
+      transition: 0.2s;
+    }
+    .btn-glow:hover { opacity: 0.9; transform: translateY(-1px); }
+  </style>
+</head>
+<body class="p-4 sm:p-8">
+
+  <div id="loginScreen" class="max-w-md mx-auto mt-20 glass text-center space-y-4">
+    <div class="flex justify-center">
+      <div class="p-3 bg-sky-500/10 rounded-full border border-sky-500/30">
+        <i data-feather="lock" class="w-8 h-8 text-sky-400"></i>
+      </div>
+    </div>
+    <h2 class="text-xl font-bold text-sky-400">Master Control Panel</h2>
+    <p class="text-xs text-gray-400">Enter passcode to manage stock and countries</p>
+    <input id="passInput" type="password" placeholder="Enter Key (750)" class="input-dark text-center text-lg" />
+    <button onclick="login()" class="btn-glow w-full">Unlock Dashboard</button>
+  </div>
+
+  <div id="adminDashboard" class="max-w-5xl mx-auto space-y-6 hidden">
+    
+    <div class="flex justify-between items-center border-b border-gray-800 pb-4">
+      <div>
+        <h1 class="text-2xl font-extrabold text-sky-400">GM TUSHARX · Admin Panel</h1>
+        <p class="text-xs text-gray-400">Manage Countries & Custom Stock Numbers</p>
+      </div>
+      <button onclick="logout()" class="px-4 py-2 bg-red-600/20 hover:bg-red-600/30 text-red-400 rounded-lg text-xs font-bold border border-red-500/30">
+        Logout
+      </button>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <div class="glass flex items-center gap-4">
+        <div class="p-3 bg-sky-500/10 rounded-xl text-sky-400"><i data-feather="globe" class="w-6 h-6"></i></div>
+        <div>
+          <div class="text-xs text-gray-400 font-bold uppercase">Countries</div>
+          <div class="text-2xl font-extrabold text-sky-400" id="statCountries">0</div>
+        </div>
+      </div>
+      <div class="glass flex items-center gap-4">
+        <div class="p-3 bg-green-500/10 rounded-xl text-green-400"><i data-feather="database" class="w-6 h-6"></i></div>
+        <div>
+          <div class="text-xs text-gray-400 font-bold uppercase">Total Stock</div>
+          <div class="text-2xl font-extrabold text-green-400" id="statNumbers">0</div>
+        </div>
+      </div>
+      <div class="glass flex items-center gap-4">
+        <div class="p-3 bg-purple-500/10 rounded-xl text-purple-400"><i data-feather="cpu" class="w-6 h-6"></i></div>
+        <div>
+          <div class="text-xs text-gray-400 font-bold uppercase">Status</div>
+          <div class="text-sm font-extrabold text-purple-400">Live Local Storage</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      
+      <div class="glass space-y-4">
+        <h3 class="font-bold text-sky-400 text-sm flex items-center gap-2">
+          <i data-feather="flag" class="w-4 h-4"></i> Country Management
+        </h3>
+        
+        <div>
+          <label class="text-xs text-gray-400 mb-1 block">1. Add New Country</label>
+          <div class="flex gap-2">
+            <input id="countryInput" type="text" placeholder="e.g. Bangladesh, USA, Germany" class="input-dark text-xs" />
+            <button onclick="addCountry()" class="btn-glow text-xs">Add</button>
+          </div>
+        </div>
+
+        <div>
+          <label class="text-xs text-gray-400 mb-1 block">2. Delete Existing Country</label>
+          <div class="flex gap-2">
+            <select id="countryDeleteSelect" class="input-dark text-xs"></select>
+            <button onclick="deleteCountry()" class="bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded-lg text-xs font-bold">
+              Delete
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="glass space-y-4">
+        <h3 class="font-bold text-sky-400 text-sm flex items-center gap-2">
+          <i data-feather="upload-cloud" class="w-4 h-4"></i> Upload Numbers (TXT / Single)
+        </h3>
+        
+        <div>
+          <label class="text-xs text-gray-400 mb-1 block">Select Target Country</label>
+          <select id="countryUploadSelect" class="input-dark text-xs"></select>
+        </div>
+
+        <div>
+          <label class="text-xs text-gray-400 mb-1 block">Paste Numbers (1 per line)</label>
+          <textarea id="txtArea" rows="4" placeholder="+18005550199&#10;+8801700000000" class="input-dark text-xs font-mono"></textarea>
+        </div>
+
+        <button onclick="uploadNumbers()" class="btn-glow w-full text-xs">
+          Upload Stock to Live Site
+        </button>
+      </div>
+
+    </div>
+
+    <div class="glass space-y-4">
+      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+        <h3 class="font-bold text-white text-sm flex items-center gap-2">
+          <i data-feather="list" class="w-4 h-4 text-sky-400"></i> Stock Inventory List
+        </h3>
+        <div class="flex items-center gap-2 w-full sm:w-auto">
+          <input id="searchInput" type="text" onkeyup="filterStock()" placeholder="Search Number..." class="input-dark text-xs py-1.5" />
+          <button onclick="clearAllNumbers()" class="px-3 py-1.5 bg-red-600/20 text-red-400 border border-red-500/30 hover:bg-red-600/30 rounded-lg text-xs font-bold whitespace-nowrap">
+            Clear All Stock
+          </button>
+        </div>
+      </div>
+
+      <div class="overflow-x-auto max-h-72">
+        <table class="w-full text-left text-xs">
+          <thead class="sticky top-0 bg-[#12141d] text-gray-400 border-b border-gray-800">
+            <tr>
+              <th class="py-2.5 px-3">#</th>
+              <th class="py-2.5 px-3">Country</th>
+              <th class="py-2.5 px-3">Phone Number</th>
+              <th class="py-2.5 px-3 text-right">Action</th>
+            </tr>
+          </thead>
+          <tbody id="inventoryTable" class="divide-y divide-gray-800"></tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    const PASSCODE = '750';
+    let adminData = JSON.parse(localStorage.getItem('DTZ_ADMIN_DATA')) || {
+      countries: ['Bangladesh', 'India', 'USA'],
+      numbers: []
+    };
+
+    function login() {
+      if (document.getElementById('passInput').value === PASSCODE) {
+        document.getElementById('loginScreen').classList.add('hidden');
+        document.getElementById('adminDashboard').classList.remove('hidden');
+        renderDashboard();
+      } else {
+        alert('Wrong Passcode!');
+      }
+    }
+
+    function logout() {
+      document.getElementById('passInput').value = '';
+      document.getElementById('adminDashboard').classList.add('hidden');
+      document.getElementById('loginScreen').classList.remove('hidden');
+    }
+
+    function saveData() {
+      localStorage.setItem('DTZ_ADMIN_DATA', JSON.stringify(adminData));
+      renderDashboard();
+    }
+
+    function renderDashboard() {
+      // Stats
+      document.getElementById('statCountries').textContent = adminData.countries.length;
+      document.getElementById('statNumbers').textContent = adminData.numbers.length;
+
+      // Dropdowns
+      const options = adminData.countries.map(c => `<option value="${c}">${c}</option>`).join('');
+      document.getElementById('countryDeleteSelect').innerHTML = options || '<option>No Countries</option>';
+      document.getElementById('countryUploadSelect').innerHTML = options || '<option>No Countries</option>';
+
+      renderStockTable(adminData.numbers);
+      feather.replace();
+    }
+
+    function renderStockTable(list) {
+      const table = document.getElementById('inventoryTable');
+      if (!list || list.length === 0) {
+        table.innerHTML = `<tr><td colspan="4" class="py-6 text-center text-gray-500">No stock numbers found.</td></tr>`;
+      } else {
+        table.innerHTML = list.map((item, idx) => `
+          <tr class="hover:bg-[#1b1e2e]">
+            <td class="py-2.5 px-3 text-gray-500">${idx + 1}</td>
+            <td class="py-2.5 px-3 text-sky-400 font-semibold">${item.country}</td>
+            <td class="py-2.5 px-3 font-mono text-gray-200">${item.number}</td>
+            <td class="py-2.5 px-3 text-right">
+              <button onclick="deleteNumber(${idx})" class="text-red-400 hover:text-red-300 font-bold">Delete</button>
+            </td>
+          </tr>
+        `).join('');
+      }
+    }
+
+    function filterStock() {
+      const query = document.getElementById('searchInput').value.toLowerCase();
+      const filtered = adminData.numbers.filter(item => 
+        item.number.toLowerCase().includes(query) || item.country.toLowerCase().includes(query)
+      );
+      renderStockTable(filtered);
+    }
+
+    function addCountry() {
+      const input = document.getElementById('countryInput');
+      const val = input.value.trim();
+      if (val && !adminData.countries.includes(val)) {
+        adminData.countries.push(val);
+        input.value = '';
+        saveData();
+      }
+    }
+
+    function deleteCountry() {
+      const selected = document.getElementById('countryDeleteSelect').value;
+      if (!selected) return;
+      if (confirm(`Delete country "${selected}" and all its numbers?`)) {
+        adminData.countries = adminData.countries.filter(c => c !== selected);
+        adminData.numbers = adminData.numbers.filter(n => n.country !== selected);
+        saveData();
+      }
+    }
+
+    function uploadNumbers() {
+      const country = document.getElementById('countryUploadSelect').value;
+      const text = document.getElementById('txtArea').value;
+      const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+
+      if (!country || lines.length === 0) {
+        alert('Select a country and paste at least 1 number!');
+        return;
+      }
+
+      lines.forEach(num => {
+        adminData.numbers.push({ country, number: num });
+      });
+
+      document.getElementById('txtArea').value = '';
+      saveData();
+      alert(`Successfully added ${lines.length} numbers to ${country}!`);
+    }
+
+    function deleteNumber(index) {
+      adminData.numbers.splice(index, 1);
+      saveData();
+    }
+
+    function clearAllNumbers() {
+      if (confirm('Are you sure you want to clear all manual stock numbers?')) {
+        adminData.numbers = [];
+        saveData();
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      feather.replace();
+    });
+  </script>
+</body>
+</html>
